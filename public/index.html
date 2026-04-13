@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hometown Pipeline - Catering Outreach</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header>
+  <div class="logo-area">
+    <h1>Hometown Coffee & Juice</h1>
+    <p>Catering Outreach Pipeline</p>
+  </div>
+</header>
+<nav>
+  <button id="btn-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+  <button id="btn-prospects" onclick="switchTab('prospects')">Prospects</button>
+  <button id="btn-outreach" onclick="switchTab('outreach')">Outreach</button>
+  <button id="btn-templates" onclick="switchTab('templates')">Templates</button>
+  <button id="btn-settings" onclick="switchTab('settings')">Settings</button>
+  <button id="btn-help" onclick="switchTab('help')">Help</button>
+</nav>
+<div class="container">
+  <div id="tab-dashboard"></div>
+  <div id="tab-prospects" style="display:none"></div>
+  <div id="tab-outreach" style="display:none"></div>
+  <div id="tab-templates" style="display:none"></div>
+  <div id="tab-settings" style="display:none"></div>
+  <div id="tab-help" style="display:none"></div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/prospects.js"></script>
+<script src="/js/outreach.js"></script>
+<script src="/js/templates.js"></script>
+<script src="/js/settings.js"></script>
+<script src="/js/help.js"></script>
+</body>
+</html>

@@ -146,28 +146,43 @@ router.get('/export/csv', (req, res) => {
 
 // CSV Import
 router.post('/import/csv', (req, res) => {
-  const { data } = req.body; // Array of objects
+  const { data, skip_duplicates } = req.body;
   if (!Array.isArray(data) || data.length === 0) return res.status(400).json({ error: 'No data provided' });
 
   const insert = db.prepare(`
-    INSERT INTO prospects (id, business_name, category, contact_name, phone, email, address, city, nearest_location, notes, source)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'csv_import')
+    INSERT INTO prospects (id, business_name, category, contact_name, phone, email, address, city, nearest_location, website, notes, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'csv_import')
   `);
 
+  // For duplicate detection: match on business_name (case-insensitive) OR email (if both exist)
+  const findByName = db.prepare('SELECT id FROM prospects WHERE LOWER(business_name) = LOWER(?)');
+  const findByEmail = db.prepare("SELECT id FROM prospects WHERE LOWER(email) = LOWER(?) AND email != ''");
+
   const insertMany = db.transaction((rows) => {
-    let count = 0;
+    let imported = 0;
+    let skipped = 0;
     for (const row of rows) {
       if (!row.business_name) continue;
+
+      if (skip_duplicates !== false) {
+        const dupeByName = findByName.get(row.business_name);
+        if (dupeByName) { skipped++; continue; }
+        if (row.email) {
+          const dupeByEmail = findByEmail.get(row.email);
+          if (dupeByEmail) { skipped++; continue; }
+        }
+      }
+
       const id = nanoid();
       const city = row.city || '';
-      insert.run(id, row.business_name, row.category || 'Corporate', row.contact_name || '', row.phone || '', row.email || '', row.address || '', city, row.nearest_location || autoAssignLocation(city), row.notes || '');
-      count++;
+      insert.run(id, row.business_name, row.category || 'Corporate', row.contact_name || '', row.phone || '', row.email || '', row.address || '', city, row.nearest_location || autoAssignLocation(city), row.website || '', row.notes || '');
+      imported++;
     }
-    return count;
+    return { imported, skipped };
   });
 
-  const count = insertMany(data);
-  res.json({ imported: count });
+  const result = insertMany(data);
+  res.json(result);
 });
 
 function autoAssignLocation(city) {

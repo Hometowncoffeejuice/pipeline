@@ -37,7 +37,7 @@ function processFollowUps() {
       // 3. Last email was sent more than rule.days_delay days ago
       // 4. Haven't received this sequence level yet
       // 5. Aren't unsubscribed
-      // 6. Total follow-ups < 3
+      // 6. Total follow-ups < 2
       const prospects = db.prepare(`
         SELECT p.*,
           (SELECT COUNT(*) FROM outreach_emails WHERE prospect_id = p.id AND template_id IN (

@@ -136,6 +136,144 @@ Adam Rubin
 Hometown Coffee & Juice, {{nearest_location}}',
 'initial', NULL);
 
+-- Initial outreach templates WITH tasting offer
+
+INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
+('tpl_initial_corporate_tasting', 'Corporate - Initial + Tasting', 'Lunch for the team at {{business_name}}?',
+'<p>Hi {{contact_name}},</p>
+<p>It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We do catering for a lot of offices in the area and I wanted to reach out to see if your team could use something like that.</p>
+<p>We can set up recurring weekly lunches, breakfast for meetings, or one-time orders, whatever works best for you. I''d also be happy to drop by with some sample platters if you want to get a feel for what we do.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
+<td style="padding-right:10px"><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:#1b2a4a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Book a Call With Me</a></td>
+<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
+<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Our Menu</a></td>
+</tr></table>
+<p>Or just reply to this email, happy to chat however is easiest for you.</p>
+<p>Best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
+'Hi {{contact_name}},
+
+It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We do catering for a lot of offices in the area and I wanted to reach out to see if your team could use something like that.
+
+We can set up recurring weekly lunches, breakfast for meetings, or one-time orders, whatever works best. I''d also be happy to drop by with some sample platters if you want to get a feel for what we do.
+
+Book a call: {{booking_url}}
+Order catering: {{catering_url}}
+View our menu: {{menu_url}}
+
+Or just reply to this email, happy to chat however is easiest.
+
+Best,
+Adam Rubin
+Hometown Coffee & Juice, {{nearest_location}}',
+'initial', 'Corporate');
+
+INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
+('tpl_initial_medical_tasting', 'Medical - Initial + Tasting', 'Catering for your {{city}} practice',
+'<p>Hi {{contact_name}},</p>
+<p>It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We work with a number of medical and dental offices in the area on catering and I wanted to reach out to your practice.</p>
+<p>Whether it''s weekly staff lunches, pharma rep meetings, or patient appreciation events, we can put something together that fits your schedule. If it''d be helpful, I''m happy to drop off some sample platters for the team to try.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
+<td style="padding-right:10px"><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:#1b2a4a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Book a Call With Me</a></td>
+<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
+<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Our Menu</a></td>
+</tr></table>
+<p>Best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
+'Hi {{contact_name}},
+
+It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We work with a number of medical and dental offices in the area on catering.
+
+Whether it''s weekly staff lunches, pharma rep meetings, or patient appreciation events, we can put something together that fits your schedule. If it''d be helpful, I''m happy to drop off some sample platters for the team to try.
+
+Book a call: {{booking_url}}
+Order catering: {{catering_url}}
+View our menu: {{menu_url}}
+
+Best,
+Adam Rubin
+Hometown Coffee & Juice, {{nearest_location}}',
+'initial', 'Medical');
+
+INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
+('tpl_initial_school_tasting', 'School - Initial + Tasting', 'Catering for {{business_name}} events',
+'<p>Hi {{contact_name}},</p>
+<p>It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We work with several schools in the area on catering and I wanted to introduce ourselves.</p>
+<p>Teacher appreciation lunches, PTA events, staff meetings, end of year celebrations, we can handle all of it. If it''d be useful, I''m happy to bring some sample platters by the staff room so people can see what we''re all about.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
+<td style="padding-right:10px"><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:#1b2a4a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Book a Call With Me</a></td>
+<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
+<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Our Menu</a></td>
+</tr></table>
+<p>Looking forward to connecting,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
+'Hi {{contact_name}},
+
+It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We work with several schools in the area on catering.
+
+Teacher appreciation lunches, PTA events, staff meetings, end of year celebrations, we can handle all of it. If it''d be useful, I''m happy to bring some sample platters by the staff room so people can see what we''re all about.
+
+Book a call: {{booking_url}}
+Order catering: {{catering_url}}
+View our menu: {{menu_url}}
+
+Looking forward to connecting,
+Adam Rubin
+Hometown Coffee & Juice, {{nearest_location}}',
+'initial', 'School');
+
+INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
+('tpl_initial_worship_tasting', 'Worship - Initial + Tasting', 'Catering for {{business_name}} gatherings',
+'<p>Hi {{contact_name}},</p>
+<p>It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We cater for a number of congregations and community groups on the North Shore and I wanted to see if we could be helpful for your community as well.</p>
+<p>After-service gatherings, committee meetings, community meals, holiday celebrations, we can put together something simple and affordable. If it''d be helpful, I''m happy to bring some sample platters by for your next gathering so people can see what we do.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
+<td style="padding-right:10px"><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:#1b2a4a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Book a Call With Me</a></td>
+<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
+<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Our Menu</a></td>
+</tr></table>
+<p>Best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
+'Hi {{contact_name}},
+
+It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We cater for a number of congregations and community groups on the North Shore.
+
+After-service gatherings, committee meetings, community meals, holiday celebrations, we can put together something simple and affordable. If it''d be helpful, I''m happy to bring some sample platters by for your next gathering so people can see what we do.
+
+Book a call: {{booking_url}}
+Order catering: {{catering_url}}
+View our menu: {{menu_url}}
+
+Best,
+Adam Rubin
+Hometown Coffee & Juice, {{nearest_location}}',
+'initial', 'Worship');
+
+INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
+('tpl_initial_general_tasting', 'General - Initial + Tasting', 'Catering from Hometown near {{city}}',
+'<p>Hi {{contact_name}},</p>
+<p>It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We do catering for businesses and groups in the area and I wanted to reach out.</p>
+<p>Whether you need something recurring like a weekly lunch, or catering for events and meetings, we make it really easy. If you''re curious, I''m happy to drop off some sample platters so you and your team can see what we''re all about.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
+<td style="padding-right:10px"><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:#1b2a4a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Book a Call With Me</a></td>
+<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
+<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Our Menu</a></td>
+</tr></table>
+<p>Or just reply to this email, happy to chat however works best.</p>
+<p>Best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
+'Hi {{contact_name}},
+
+It''s Adam Rubin from Hometown Coffee & Juice in {{nearest_location}}. We do catering for businesses and groups in the area.
+
+Whether you need something recurring like a weekly lunch, or catering for events and meetings, we make it really easy. If you''re curious, I''m happy to drop off some sample platters so you and your team can see what we''re all about.
+
+Book a call: {{booking_url}}
+Order catering: {{catering_url}}
+View our menu: {{menu_url}}
+
+Or just reply to this email, happy to chat however works best.
+
+Best,
+Adam Rubin
+Hometown Coffee & Juice, {{nearest_location}}',
+'initial', NULL);
+
 -- Follow-up templates
 INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
 ('tpl_followup1', 'Follow-up 1', 'Following up on catering',
@@ -162,48 +300,27 @@ Hometown Coffee & Juice',
 'follow_up_1', NULL);
 
 INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
-('tpl_followup2', 'Follow-up 2', 'One more note on catering',
+('tpl_followup2', 'Final Follow-up', 'Just checking in on catering',
 '<p>Hi {{contact_name}},</p>
-<p>Wanted to reach out one more time. A lot of our clients started with just a single order to try us out and now they''re ordering every week. No commitment needed, just give it a try whenever the timing is right.</p>
+<p>Just wanted to check in one more time. Whenever you need catering, we''re right here in {{nearest_location}} and happy to help. Feel free to save these links for whenever the timing is right.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
 <td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
 <td style="padding-right:10px"><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Menu</a></td>
 <td><a href="{{booking_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">Chat With Me</a></td>
 </tr></table>
-<p>Best,<br>Adam Rubin<br>Hometown Coffee & Juice</p>',
+<p>All the best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
 'Hi {{contact_name}},
 
-Wanted to reach out one more time. A lot of our clients started with just a single order and now they''re ordering every week. No commitment needed, just give it a try whenever the timing is right.
+Just wanted to check in one more time. Whenever you need catering, we''re right here in {{nearest_location}} and happy to help. Feel free to save these links for whenever the timing is right.
 
 Order catering: {{catering_url}}
 View menu: {{menu_url}}
 Chat with me: {{booking_url}}
 
-Best,
-Adam Rubin
-Hometown Coffee & Juice',
-'follow_up_2', NULL);
-
-INSERT INTO email_templates (id, name, subject, body_html, body_text, template_type, category) VALUES
-('tpl_followup3', 'Final Follow-up', 'Last note from me',
-'<p>Hi {{contact_name}},</p>
-<p>Last email from me, I promise. Whenever you need catering, we''re right here in {{nearest_location}}. Feel free to save these links for when you''re ready:</p>
-<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0"><tr>
-<td style="padding-right:10px"><a href="{{catering_url}}" style="display:inline-block;padding:14px 28px;background:#27ae60;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order Catering</a></td>
-<td><a href="{{menu_url}}" style="display:inline-block;padding:14px 28px;background:white;color:#1b2a4a;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:2px solid #1b2a4a;">View Menu</a></td>
-</tr></table>
-<p>All the best,<br>Adam Rubin<br>Hometown Coffee & Juice, {{nearest_location}}</p>',
-'Hi {{contact_name}},
-
-Last email from me, I promise. Whenever you need catering, we''re right here in {{nearest_location}}.
-
-Order catering: {{catering_url}}
-View menu: {{menu_url}}
-
 All the best,
 Adam Rubin
 Hometown Coffee & Juice, {{nearest_location}}',
-'follow_up_3', NULL);
+'follow_up_2', NULL);
 
 -- App settings (stored as key-value)
 CREATE TABLE IF NOT EXISTS app_settings (

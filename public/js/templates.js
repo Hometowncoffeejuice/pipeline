@@ -78,9 +78,8 @@ async function showTemplateEditor(id) {
           <div class="field"><label>Type</label>
             <select id="tplType">
               <option value="initial" ${template.template_type === 'initial' ? 'selected' : ''}>Initial</option>
-              <option value="follow_up_1" ${template.template_type === 'follow_up_1' ? 'selected' : ''}>Follow-up 1</option>
-              <option value="follow_up_2" ${template.template_type === 'follow_up_2' ? 'selected' : ''}>Follow-up 2</option>
-              <option value="follow_up_3" ${template.template_type === 'follow_up_3' ? 'selected' : ''}>Follow-up 3</option>
+              <option value="follow_up_1" ${template.template_type === 'follow_up_1' ? 'selected' : ''}>Follow-up 1 (1 week)</option>
+              <option value="follow_up_2" ${template.template_type === 'follow_up_2' ? 'selected' : ''}>Follow-up 2 (3 weeks)</option>
               <option value="reengagement" ${template.template_type === 'reengagement' ? 'selected' : ''}>Re-engagement</option>
             </select>
           </div>

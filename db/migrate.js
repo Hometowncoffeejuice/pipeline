@@ -36,9 +36,9 @@ if (ruleCount.c === 0) {
     VALUES (?, ?, ?, ?, ?, ?, 1)
   `);
   // These reference template IDs that get created in seed.sql
-  insertRule.run(nanoid(), 'First Follow-up', 'sent', 3, 'tpl_followup1', 1);
-  insertRule.run(nanoid(), 'Second Follow-up', 'sent', 5, 'tpl_followup2', 2);
-  insertRule.run(nanoid(), 'Final Follow-up', 'sent', 7, 'tpl_followup3', 3);
+  // 1 week after initial outreach, 3 weeks after initial outreach
+  insertRule.run(nanoid(), 'First Follow-up (1 week)', 'sent', 7, 'tpl_followup1', 1);
+  insertRule.run(nanoid(), 'Final Follow-up (3 weeks)', 'sent', 21, 'tpl_followup2', 2);
   console.log('Default follow-up rules created.');
 }
 

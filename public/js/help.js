@@ -69,7 +69,7 @@ function loadHelp() {
                 <li><code>{{booking_url}}</code> — your Google Calendar link for scheduling calls</li>
               </ul>
             </li>
-            <li><strong>Template types:</strong> "Initial" templates are for first contact. "Follow-up 1/2/3" are used by the automated follow-up system. You can also create "Re-engagement" templates for reaching out to old prospects.</li>
+            <li><strong>Template types:</strong> "Initial" templates are for first contact. "Follow-up 1" and "Follow-up 2" are used by the automated follow-up system. You can also create "Re-engagement" templates for reaching out to old prospects.</li>
             <li><strong>Category-specific templates:</strong> Templates can be tagged to a category (Corporate, Medical, School, etc.) so the messaging is tailored. The General template works for any category.</li>
             <li><strong>Editing:</strong> Click any template card to open the editor. The body is HTML — you can use the placeholder buttons to insert placeholders at your cursor position. Click "Preview" to see how it'll look with sample data filled in.</li>
             <li><strong>Creating new templates:</strong> Click "+ New Template" to create your own from scratch. You can also duplicate an existing template by creating a new one and copying the HTML.</li>
@@ -93,9 +93,9 @@ function loadHelp() {
           <h3>Automated Follow-ups</h3>
           <p>The system automatically sends follow-up emails to prospects who don't open your initial email.</p>
           <ul>
-            <li><strong>Default sequence:</strong> After the initial email, if a prospect doesn't open it: Follow-up 1 sends after 3 days, Follow-up 2 after 5 more days, Final Follow-up after 7 more days.</li>
+            <li><strong>Default sequence:</strong> After the initial email, if a prospect doesn't open it: Follow-up 1 sends after 1 week, Follow-up 2 (final) sends after 3 weeks. That's it, just two check-ins so it doesn't feel pushy.</li>
             <li><strong>What stops follow-ups:</strong> If a prospect opens or clicks any email, follow-ups stop and their status moves to "In Contact." If they unsubscribe, all future emails stop permanently.</li>
-            <li><strong>Max 3 follow-ups:</strong> The system never sends more than 3 follow-up emails per prospect. After that, they stay in the pipeline but don't get more automated emails.</li>
+            <li><strong>Max 2 follow-ups:</strong> The system never sends more than 2 follow-up emails per prospect. After that, they stay in the pipeline but don't get more automated emails.</li>
             <li><strong>Runs hourly:</strong> The follow-up check runs every hour while the server is running.</li>
             <li><strong>Enable/disable:</strong> You can turn individual follow-up rules on or off in Settings.</li>
           </ul>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { nanoid } = require('nanoid');
+const { autoAssignLocation } = require('../services/template-renderer');
 
 // List prospects with filters
 router.get('/', (req, res) => {
@@ -184,14 +185,5 @@ router.post('/import/csv', (req, res) => {
   const result = insertMany(data);
   res.json(result);
 });
-
-function autoAssignLocation(city) {
-  const c = (city || '').toLowerCase();
-  if (c.includes('glencoe')) return 'Glencoe';
-  if (c.includes('winnetka') || c.includes('wilmette') || c.includes('kenilworth')) return 'Winnetka';
-  if (c.includes('glenview') || c.includes('northbrook') || c.includes('golf')) return 'Glenview';
-  if (c.includes('lake forest') || c.includes('highland park') || c.includes('highwood') || c.includes('deerfield')) return 'Lake Forest';
-  return '';
-}
 
 module.exports = router;

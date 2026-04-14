@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 
 // Update settings
 router.put('/', (req, res) => {
-  const allowedKeys = ['from_email', 'from_name', 'daily_send_limit', 'catering_url', 'menu_url', 'booking_url', 'resend_api_key', 'business_address', 'location_glencoe', 'location_winnetka', 'location_glenview', 'location_lake_forest'];
+  const allowedKeys = ['from_email', 'from_name', 'reply_to_email', 'email_signature', 'daily_send_limit', 'catering_url', 'menu_url', 'booking_url', 'resend_api_key', 'business_address', 'location_glencoe', 'location_winnetka', 'location_glenview', 'location_lake_forest'];
 
   const upsert = db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
 

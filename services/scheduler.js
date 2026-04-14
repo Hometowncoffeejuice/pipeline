@@ -2,15 +2,16 @@ const cron = require('node-cron');
 const db = require('../db');
 const { nanoid } = require('nanoid');
 const emailer = require('./emailer');
+const {
+  buildTemplateData,
+  renderTemplate,
+  hasUnresolvedPlaceholder
+} = require('./template-renderer');
 
 function getSettings() {
   const settings = {};
   db.prepare('SELECT key, value FROM app_settings').all().forEach(s => settings[s.key] = s.value);
   return settings;
-}
-
-function renderTemplate(text, data) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
 }
 
 // Run every hour to check for follow-ups due
@@ -64,24 +65,27 @@ function processFollowUps() {
       `);
 
       for (const p of prospects) {
-        const data = {
-          business_name: p.business_name,
-          contact_name: p.contact_name || 'there',
-          city: p.city,
-          nearest_location: p.nearest_location,
-          catering_url: settings.catering_url || '',
-          booking_url: settings.booking_url || '',
-          menu_url: settings.menu_url || ''
-        };
+        // Safety: skip prospects without a business name — won't send garbled subjects
+        if (!p.business_name || !p.business_name.trim()) {
+          console.warn(`Skipping follow-up for prospect ${p.id}: missing business name`);
+          continue;
+        }
 
+        const data = buildTemplateData(p, settings);
         const subject = renderTemplate(template.subject, data);
         const body = renderTemplate(template.body_html, data);
+
+        // Final safety net — refuse to queue if anything failed to render
+        if (hasUnresolvedPlaceholder(subject) || hasUnresolvedPlaceholder(body)) {
+          console.error(`Skipping follow-up for prospect ${p.id}: unresolved placeholder in rendered content`);
+          continue;
+        }
 
         insertEmail.run(nanoid(), p.id, template.id, subject, body);
 
         // Update pipeline status to follow_up
         if (p.pipeline_status === 'initial_outreach') {
-          db.prepare('UPDATE prospects SET pipeline_status = "follow_up", updated_at = datetime("now") WHERE id = ?').run(p.id);
+          db.prepare('UPDATE prospects SET pipeline_status = \'follow_up\', updated_at = datetime(\'now\') WHERE id = ?').run(p.id);
         }
       }
     }

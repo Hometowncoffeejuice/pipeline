@@ -158,6 +158,17 @@ async function updateProspectStatus(id, status, selectEl) {
   }
 }
 
+async function markAsInContact(id) {
+  try {
+    await API.put(`/prospects/${id}`, { pipeline_status: 'in_contact' });
+    showToast('Marked as In Contact');
+    openProspectDetail(id);
+    loadProspects();
+  } catch (err) {
+    showToast('Failed to update status', 'error');
+  }
+}
+
 async function deleteProspect(id) {
   if (!confirm('Delete this prospect?')) return;
   try {
@@ -210,7 +221,15 @@ function renderProspectDetail(data) {
         <div class="outreach-cta">
           ${neverEmailed
             ? `<button class="btn-start-outreach" onclick="startOutreach('${p.id}')">Start Outreach</button>`
-            : `<button class="btn-start-outreach btn-gold" onclick="startOutreach('${p.id}')">Send Another Email</button>`
+            : `
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;width:100%">
+                ${p.pipeline_status === 'initial_outreach' || p.pipeline_status === 'follow_up'
+                  ? `<button class="btn-start-outreach" style="flex:0 1 auto;min-width:180px" onclick="startOutreach('${p.id}')">${p.pipeline_status === 'initial_outreach' ? 'Send Follow-up' : 'Send Final Follow-up'}</button>
+                     <button class="btn-start-outreach btn-gold" style="flex:0 1 auto;min-width:180px" onclick="markAsInContact('${p.id}')">Mark as In Contact</button>`
+                  : `<button class="btn-start-outreach btn-gold" onclick="startOutreach('${p.id}')">Send Another Email</button>`
+                }
+              </div>
+            `
           }
         </div>
       ` : p.unsubscribed
@@ -330,13 +349,36 @@ async function saveProspectEdits(id) {
 
 async function startOutreach(prospectId) {
   const templates = await API.get('/templates');
-  const initialTemplates = templates.filter(t => t.template_type === 'initial');
-  if (initialTemplates.length === 0) return showToast('No initial outreach templates found', 'error');
+  if (templates.length === 0) return showToast('No templates found', 'error');
 
-  // Find best matching template based on prospect category
   const prospect = prospectsData.find(p => p.id === prospectId);
-  const catMatch = initialTemplates.find(t => t.category && prospect?.category && t.category.toLowerCase() === prospect.category.toLowerCase());
-  const defaultTemplate = catMatch || initialTemplates.find(t => !t.category) || initialTemplates[0];
+  const initialTemplates = templates.filter(t => t.template_type === 'initial');
+  const followUp1 = templates.find(t => t.template_type === 'follow_up_1');
+  const followUp2 = templates.find(t => t.template_type === 'follow_up_2');
+
+  // Smart default based on where the prospect is in the pipeline
+  let defaultTemplate;
+  if (prospect?.pipeline_status === 'initial_outreach') {
+    defaultTemplate = followUp1 || initialTemplates[0];
+  } else if (prospect?.pipeline_status === 'follow_up') {
+    defaultTemplate = followUp2 || followUp1 || initialTemplates[0];
+  } else {
+    // not_touched, in_contact, secured, lost — default to initial, category-matched
+    const catMatch = initialTemplates.find(t => t.category && prospect?.category && t.category.toLowerCase() === prospect.category.toLowerCase());
+    defaultTemplate = catMatch || initialTemplates.find(t => !t.category) || initialTemplates[0] || templates[0];
+  }
+
+  // Group templates for a clean dropdown with section labels
+  const initialNoTasting = initialTemplates.filter(t => !t.name.toLowerCase().includes('tasting'));
+  const initialTasting = initialTemplates.filter(t => t.name.toLowerCase().includes('tasting'));
+  const followUps = templates.filter(t => t.template_type === 'follow_up_1' || t.template_type === 'follow_up_2');
+
+  const renderGroup = (label, list) => {
+    if (list.length === 0) return '';
+    return `<optgroup label="${label}">${list.map(t =>
+      `<option value="${t.id}" ${t.id === defaultTemplate.id ? 'selected' : ''}>${esc(t.name)}</option>`
+    ).join('')}</optgroup>`;
+  };
 
   const area = document.getElementById('composeArea');
   area.style.display = 'block';
@@ -350,14 +392,16 @@ async function startOutreach(prospectId) {
         <div style="margin-bottom:0.75rem">
           <label style="font-size:0.78rem;color:var(--navy-light);font-weight:600">Template</label>
           <select id="composeTemplateSelect" class="compose-template-select" style="width:100%;margin-top:4px" onchange="updateComposePreview('${prospectId}')">
-            ${initialTemplates.map(t => `<option value="${t.id}" ${t.id === defaultTemplate.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('')}
+            ${renderGroup('Initial Outreach', initialNoTasting)}
+            ${renderGroup('Initial + Tasting Offer', initialTasting)}
+            ${renderGroup('Follow-ups', followUps)}
           </select>
         </div>
         <div class="compose-subject" id="composeSubject">Loading...</div>
         <div class="compose-preview" id="composeBody">Loading...</div>
       </div>
       <div class="compose-footer">
-        <span style="font-size:0.78rem;color:var(--navy-light)">Follow-ups auto-send at 1 week &amp; 3 weeks</span>
+        <span style="font-size:0.78rem;color:var(--navy-light)">You control every send &mdash; no auto follow-ups</span>
         <button class="btn-send" onclick="sendFromCompose('${prospectId}')">Send Email</button>
       </div>
     </div>
@@ -388,10 +432,14 @@ async function sendFromCompose(prospectId) {
   const templateId = document.getElementById('composeTemplateSelect').value;
   try {
     await API.post('/outreach/send', { prospect_id: prospectId, template_id: templateId });
-    showToast('Email sent! Follow-ups scheduled for 1 week and 3 weeks.');
+    showToast('Sending email...');
     document.getElementById('composeArea').style.display = 'none';
-    openProspectDetail(prospectId);
-    loadProspects();
+    // Give the queue a moment to flush to Resend, then refresh so status shows 'sent'
+    setTimeout(() => {
+      openProspectDetail(prospectId);
+      loadProspects();
+      showToast('Email sent!');
+    }, 2500);
   } catch (err) {
     showToast('Failed to send email', 'error');
   }

@@ -3,6 +3,11 @@ const router = express.Router();
 const db = require('../db');
 const { nanoid } = require('nanoid');
 const emailer = require('../services/emailer');
+const {
+  buildTemplateData,
+  renderTemplate,
+  hasUnresolvedPlaceholder
+} = require('../services/template-renderer');
 
 // List campaigns
 router.get('/', (req, res) => {
@@ -109,38 +114,40 @@ router.post('/:id/send', async (req, res) => {
 
   const queueEmails = db.transaction((prospects) => {
     let count = 0;
+    let skipped = 0;
     for (const p of prospects) {
-      const data = {
-        business_name: p.business_name,
-        contact_name: p.contact_name || 'there',
-        city: p.city,
-        nearest_location: p.nearest_location,
-        catering_url: settings.catering_url || '',
-        booking_url: settings.booking_url || '',
-        menu_url: settings.menu_url || ''
-      };
+      // Skip prospects without a business name — safer than sending "Lunch for the team at ?"
+      if (!p.business_name || !p.business_name.trim()) { skipped++; continue; }
+
+      const data = buildTemplateData(p, settings);
       const subject = renderTemplate(template.subject, data);
       const body = renderTemplate(template.body_html, data);
+
+      // Final safety net — refuse to queue an email with a leaked placeholder
+      if (hasUnresolvedPlaceholder(subject) || hasUnresolvedPlaceholder(body)) {
+        console.error(`Skipping campaign send — unresolved placeholder for prospect ${p.id}`);
+        skipped++;
+        continue;
+      }
 
       insertEmail.run(nanoid(), campaign.id, p.id, template.id, subject, body);
       count++;
     }
-    return count;
+    return { count, skipped };
   });
 
-  const queued = queueEmails(prospects);
+  const { count: queued, skipped } = queueEmails(prospects);
 
   // Update campaign status
-  db.prepare('UPDATE outreach_campaigns SET status = "active", updated_at = datetime("now") WHERE id = ?').run(campaign.id);
+  db.prepare('UPDATE outreach_campaigns SET status = "active", updated_at = datetime(\'now\') WHERE id = ?').run(campaign.id);
 
   // Process the queue asynchronously
   emailer.processQueue();
 
-  res.json({ queued, message: `${queued} emails queued for sending` });
+  const msg = skipped > 0
+    ? `${queued} emails queued (${skipped} skipped due to missing data)`
+    : `${queued} emails queued for sending`;
+  res.json({ queued, skipped, message: msg });
 });
-
-function renderTemplate(text, data) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
-}
 
 module.exports = router;

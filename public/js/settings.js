@@ -29,6 +29,11 @@ function renderSettingsView(settings, rules) {
             <input id="setFromName" value="${esc(settings.from_name || 'Adam at Hometown Coffee & Juice')}">
           </div>
           <div class="field">
+            <label>Reply-To Email</label>
+            <input id="setReplyTo" value="${esc(settings.reply_to_email || '')}" placeholder="adam@gmail.com">
+            <small>Where prospect replies should land (e.g., your personal Gmail). Leave blank to use From Email.</small>
+          </div>
+          <div class="field">
             <label>Daily Send Limit</label>
             <input id="setDailyLimit" type="number" value="${settings.daily_send_limit || 80}">
           </div>
@@ -57,6 +62,16 @@ function renderSettingsView(settings, rules) {
             <small>Required by CAN-SPAM law in every outreach email</small>
           </div>
         </div>
+
+        <h4 style="margin-top:1.5rem">Email Signature</h4>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem">Appended to the bottom of every outreach email, above the unsubscribe footer. Use inline HTML styles (Gmail-style signatures won't carry into Resend, so we replicate yours here).</p>
+        <div class="field">
+          <textarea id="setSignature" rows="10" style="width:100%;font-family:monospace;font-size:12px;padding:0.5rem;border:1px solid #ccc;border-radius:4px">${esc(settings.email_signature || '')}</textarea>
+        </div>
+        <details style="margin-top:0.5rem">
+          <summary style="cursor:pointer;font-size:0.85rem;color:#5a8fc4">Preview signature</summary>
+          <div id="sigPreview" style="margin-top:0.75rem;padding:1rem;background:#f9f9f9;border:1px solid #eee;border-radius:4px">${settings.email_signature || '<em style="color:#999">No signature saved</em>'}</div>
+        </details>
 
         <button class="btn btn-primary" style="margin-top:1rem" onclick="saveSettings()">Save Settings</button>
       </div>
@@ -93,11 +108,13 @@ async function saveSettings() {
 
   data.from_email = document.getElementById('setFromEmail').value.trim();
   data.from_name = document.getElementById('setFromName').value.trim();
+  data.reply_to_email = document.getElementById('setReplyTo').value.trim();
   data.daily_send_limit = document.getElementById('setDailyLimit').value;
   data.catering_url = document.getElementById('setCateringUrl').value.trim();
   data.menu_url = document.getElementById('setMenuUrl').value.trim();
   data.booking_url = document.getElementById('setBookingUrl').value.trim();
   data.business_address = document.getElementById('setBizAddr').value.trim();
+  data.email_signature = document.getElementById('setSignature').value;
 
   try {
     await API.put('/settings', data);

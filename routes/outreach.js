@@ -3,15 +3,20 @@ const router = express.Router();
 const db = require('../db');
 const { nanoid } = require('nanoid');
 const emailer = require('../services/emailer');
+const {
+  buildTemplateData,
+  renderTemplate,
+  validateProspectForSend,
+  hasUnresolvedPlaceholder
+} = require('../services/template-renderer');
 
 // Send individual email to a prospect
 router.post('/send', async (req, res) => {
   const { prospect_id, template_id } = req.body;
 
   const prospect = db.prepare('SELECT * FROM prospects WHERE id = ?').get(prospect_id);
-  if (!prospect) return res.status(404).json({ error: 'Prospect not found' });
-  if (!prospect.email) return res.status(400).json({ error: 'Prospect has no email address' });
-  if (prospect.unsubscribed) return res.status(400).json({ error: 'Prospect is unsubscribed' });
+  const validationError = validateProspectForSend(prospect);
+  if (validationError) return res.status(400).json({ error: validationError });
 
   const template = db.prepare('SELECT * FROM email_templates WHERE id = ?').get(template_id);
   if (!template) return res.status(404).json({ error: 'Template not found' });
@@ -19,18 +24,15 @@ router.post('/send', async (req, res) => {
   const settings = {};
   db.prepare('SELECT key, value FROM app_settings').all().forEach(s => settings[s.key] = s.value);
 
-  const data = {
-    business_name: prospect.business_name,
-    contact_name: prospect.contact_name || 'there',
-    city: prospect.city,
-    nearest_location: prospect.nearest_location,
-    catering_url: settings.catering_url || '',
-    booking_url: settings.booking_url || '',
-    menu_url: settings.menu_url || ''
-  };
-
+  const data = buildTemplateData(prospect, settings);
   const subject = renderTemplate(template.subject, data);
   const body = renderTemplate(template.body_html, data);
+
+  // Final safety net: if anything is still unresolved, refuse to send
+  if (hasUnresolvedPlaceholder(subject) || hasUnresolvedPlaceholder(body)) {
+    console.error(`Refusing send — unresolved placeholder for prospect ${prospect.id}, template ${template.id}`);
+    return res.status(500).json({ error: 'Email could not be rendered cleanly. Please contact support.' });
+  }
 
   const emailId = nanoid();
   db.prepare(`
@@ -55,9 +57,5 @@ router.get('/prospect/:id', (req, res) => {
   `).all(req.params.id);
   res.json(emails);
 });
-
-function renderTemplate(text, data) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
-}
 
 module.exports = router;

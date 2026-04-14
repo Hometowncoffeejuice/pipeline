@@ -3,3 +3,5 @@ node_modules/
 db/hometown.db
 db/hometown.db-wal
 db/hometown.db-shm
+server.log
+*.log

@@ -1,5 +1,6 @@
 const db = require('../db');
 const { nanoid } = require('nanoid');
+const { hasUnresolvedPlaceholder } = require('./template-renderer');
 
 let processing = false;
 
@@ -60,22 +61,35 @@ async function processQueue() {
 
     for (const email of queued) {
       try {
-        // Add unsubscribe footer
+        // Last-mile safety: if somehow a queued email got through with an
+        // unrendered placeholder, mark it failed and skip rather than sending
+        // garbage to a prospect.
+        if (hasUnresolvedPlaceholder(email.subject) || hasUnresolvedPlaceholder(email.body_html)) {
+          console.error(`Email ${email.id} has unresolved placeholder, marking failed`);
+          db.prepare('UPDATE outreach_emails SET status = \'failed\' WHERE id = ?').run(email.id);
+          continue;
+        }
+
+        // Add signature + unsubscribe footer
         const unsubUrl = `${getBaseUrl()}/unsubscribe/${email.pid}`;
-        const bodyWithFooter = email.body_html + `
+        const signature = settings.email_signature || '';
+        const bodyWithFooter = email.body_html + signature + `
           <hr style="margin-top:30px;border:none;border-top:1px solid #ddd">
           <p style="font-size:12px;color:#999;text-align:center;">
             Hometown Coffee & Juice<br>
-            ${settings.business_address || 'North Shore, IL'}<br>
+            ${settings.business_address || '700 Vernon Ave., Glencoe IL'}<br>
             <a href="${unsubUrl}" style="color:#999">Unsubscribe</a>
           </p>`;
 
-        const result = await resend.emails.send({
+        const sendPayload = {
           from: `${fromName} <${fromEmail}>`,
           to: [email.to_email],
           subject: email.subject,
           html: bodyWithFooter
-        });
+        };
+        if (settings.reply_to_email) sendPayload.replyTo = settings.reply_to_email;
+
+        const result = await resend.emails.send(sendPayload);
 
         // Update email record
         db.prepare(`

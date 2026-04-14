@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { nanoid } = require('nanoid');
+const { renderTemplate, buildTemplateData } = require('../services/template-renderer');
 
 // List all templates
 router.get('/', (req, res) => {
@@ -76,25 +77,22 @@ router.post('/:id/preview', (req, res) => {
   const settings = {};
   db.prepare('SELECT key, value FROM app_settings').all().forEach(s => settings[s.key] = s.value);
 
-  const sampleData = {
+  // Build preview data using the same helper real sends use, so what you see
+  // in preview matches what prospects actually receive. Don't pre-default
+  // nearest_location — let buildTemplateData derive it from city the same way
+  // a real send would.
+  const fakeProspect = {
     business_name: req.body.business_name || 'Sample Business',
     contact_name: req.body.contact_name || 'John',
     city: req.body.city || 'Glencoe',
-    nearest_location: req.body.nearest_location || 'Glencoe',
-    catering_url: settings.catering_url || '',
-    booking_url: settings.booking_url || '#',
-    menu_url: settings.menu_url || '#',
-    ...req.body
+    nearest_location: req.body.nearest_location || ''
   };
+  const sampleData = buildTemplateData(fakeProspect, settings);
 
   const rendered = renderTemplate(template.body_html, sampleData);
   const renderedSubject = renderTemplate(template.subject, sampleData);
 
   res.json({ subject: renderedSubject, body_html: rendered });
 });
-
-function renderTemplate(text, data) {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
-}
 
 module.exports = router;

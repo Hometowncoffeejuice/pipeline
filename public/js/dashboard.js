@@ -14,27 +14,27 @@ function renderDashboard(data) {
 
   el.innerHTML = `
     <div class="dashboard-grid">
-      <div class="stat-card big">
+      <div class="stat-card big accent-navy">
         <div class="num">${p.total}</div>
         <div class="label">Total Prospects</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-red">
         <div class="num" style="color:${STATUS_COLORS.not_touched}">${p.not_touched}</div>
         <div class="label">Not Touched</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-orange">
         <div class="num" style="color:${STATUS_COLORS.initial_outreach}">${p.initial_outreach}</div>
         <div class="label">Initial Outreach</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-yellow">
         <div class="num" style="color:${STATUS_COLORS.follow_up}">${p.follow_up}</div>
         <div class="label">Follow Up</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-blue">
         <div class="num" style="color:${STATUS_COLORS.in_contact}">${p.in_contact}</div>
         <div class="label">In Contact</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-green">
         <div class="num" style="color:${STATUS_COLORS.secured}">${p.secured}</div>
         <div class="label">Secured</div>
       </div>
@@ -50,19 +50,19 @@ function renderDashboard(data) {
     </div>` : ''}
 
     <div class="dashboard-grid" style="margin-top:1rem">
-      <div class="stat-card">
+      <div class="stat-card accent-gold">
         <div class="num">${o.total_sent}</div>
         <div class="label">Emails Sent</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-blue">
         <div class="num">${o.open_rate}%</div>
         <div class="label">Open Rate</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-green">
         <div class="num">${o.click_rate}%</div>
         <div class="label">Click Rate</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card accent-navy">
         <div class="num">${o.week_sends}</div>
         <div class="label">Sent This Week</div>
       </div>

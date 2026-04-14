@@ -13,9 +13,9 @@ function renderOutreachView(campaigns) {
     <div class="card">
       <div class="card-header">
         <h3>Outreach Campaigns</h3>
-        <button class="btn btn-primary btn-sm" onclick="showNewCampaignModal()">+ New Campaign</button>
+        <button class="btn btn-primary btn-sm" onclick="showNewCampaignModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Campaign</button>
       </div>
-      <div style="padding:1rem">
+      <div style="padding:1rem 1.25rem">
         <div class="outreach-intro">
           <p><strong>How campaigns work:</strong> A campaign sends the same email template to a group of prospects at once.
           You pick a template, choose who to target (by category, city, or pipeline status), preview exactly who will get the email, then send.
@@ -23,7 +23,12 @@ function renderOutreachView(campaigns) {
         </div>
       </div>
       ${campaigns.length === 0 ?
-        '<div class="empty-msg" style="padding:2rem">No campaigns yet. Click "+ New Campaign" to start your first outreach blast!</div>' :
+        `<div class="empty-state">
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+          <h4>No campaigns yet</h4>
+          <p>Send personalized outreach to a targeted group of prospects. Click "New Campaign" to get started.</p>
+          <button class="btn btn-primary" onclick="showNewCampaignModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create your first campaign</button>
+        </div>` :
         `<div class="table-wrap">
           <table>
             <thead><tr>

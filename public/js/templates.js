@@ -25,24 +25,36 @@ async function loadTemplates() {
   }
 }
 
+const TEMPLATE_TYPE_LABELS = {
+  initial: 'Initial',
+  follow_up_1: 'Follow-up 1',
+  follow_up_2: 'Follow-up 2',
+  reengagement: 'Re-engagement'
+};
+
 function renderTemplatesView() {
   const el = document.getElementById('tab-templates');
   el.innerHTML = `
     <div class="card">
       <div class="card-header">
         <h3>Email Templates</h3>
-        <button class="btn btn-primary btn-sm" onclick="showTemplateEditor()">+ New Template</button>
+        <button class="btn btn-primary btn-sm" onclick="showTemplateEditor()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Template</button>
       </div>
       <div class="template-list">
-        ${allTemplates.length === 0 ? '<div class="empty-msg" style="padding:2rem">No templates yet</div>' :
+        ${allTemplates.length === 0 ? `
+          <div class="empty-state" style="grid-column:1/-1">
+            <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+            <h4>No templates yet</h4>
+            <p>Create your first email template to start sending personalized outreach.</p>
+          </div>` :
           allTemplates.map(t => `
             <div class="template-card" onclick="showTemplateEditor('${t.id}')">
               <div class="template-card-header">
                 <h4>${esc(t.name)}</h4>
-                <span class="badge">${t.template_type}</span>
+                <span class="badge badge-type">${TEMPLATE_TYPE_LABELS[t.template_type] || t.template_type}</span>
               </div>
               <div class="template-subject">${esc(t.subject)}</div>
-              ${t.category ? `<span class="badge badge-cat">${esc(t.category)}</span>` : ''}
+              ${t.category ? `<span class="badge badge-cat" style="margin-top:0.5rem">${esc(t.category)}</span>` : ''}
             </div>
           `).join('')}
       </div>

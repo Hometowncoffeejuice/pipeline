@@ -29,7 +29,7 @@ function renderProspectsView(data) {
     <div class="card">
       <div class="card-header">
         <h3>Add New Prospect</h3>
-        <button class="btn btn-sm" onclick="toggleAddForm()">+</button>
+        <button class="btn btn-sm btn-primary" onclick="toggleAddForm()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Prospect</button>
       </div>
       <div id="addProspectForm" class="add-form" style="display:none">
         <div class="form-grid">
@@ -57,7 +57,10 @@ function renderProspectsView(data) {
 
     <div class="card" style="margin-top:1rem">
       <div class="controls">
-        <input type="text" id="prospectSearch" placeholder="Search..." value="${document.getElementById('prospectSearch')?.value || ''}" oninput="debounceSearch()">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="prospectSearch" placeholder="Search prospects..." value="${document.getElementById('prospectSearch')?.value || ''}" oninput="debounceSearch()">
+        </div>
         <select id="prospectStatusFilter" onchange="loadProspects()">
           <option value="all">All Statuses</option>
           ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}" ${document.getElementById('prospectStatusFilter')?.value === k ? 'selected' : ''}>${v}</option>`).join('')}
@@ -69,8 +72,8 @@ function renderProspectsView(data) {
         <input type="text" id="prospectCityFilter" list="cityFilterList" placeholder="Filter by city..." value="${document.getElementById('prospectCityFilter')?.value || ''}" oninput="debounceSearch()">
         <datalist id="cityFilterList"><option value="all">All Cities</option>${SUGGESTED_CITIES.map(c => `<option value="${c}">`).join('')}</datalist>
         <div class="controls-right">
-          <button class="btn btn-sm btn-export" onclick="exportProspects()">Export CSV</button>
-          <button class="btn btn-sm btn-export" onclick="document.getElementById('csvUpload').click()">Import CSV</button>
+          <button class="btn btn-sm btn-export" onclick="exportProspects()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>Export CSV</button>
+          <button class="btn btn-sm btn-export" onclick="document.getElementById('csvUpload').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M4 3h16"/></svg>Import CSV</button>
           <input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="importCSVFile(this)">
           ${selectedProspects.size > 0 ? `<button class="btn btn-sm btn-primary" onclick="bulkSendSelected()">Email ${selectedProspects.size} Selected</button>` : ''}
         </div>
@@ -95,7 +98,7 @@ function renderProspectsView(data) {
               data.prospects.map(p => `
                 <tr class="${selectedProspects.has(p.id) ? 'selected-row' : ''}" onclick="openProspectDetail('${p.id}')">
                   <td onclick="event.stopPropagation()"><input type="checkbox" ${selectedProspects.has(p.id) ? 'checked' : ''} onchange="toggleSelectProspect('${p.id}', this.checked)"></td>
-                  <td><span class="status-badge" style="background:${STATUS_COLORS[p.pipeline_status]}">${STATUS_LABELS[p.pipeline_status] || p.pipeline_status}</span></td>
+                  <td onclick="event.stopPropagation()"><select class="status-select" style="background-color:${STATUS_COLORS[p.pipeline_status]}" onchange="updateProspectStatus('${p.id}', this.value, this)">${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}" ${p.pipeline_status === k ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
                   <td class="biz-name">${esc(p.business_name)}</td>
                   <td>${esc(p.category)}</td>
                   <td>${esc(p.city)}</td>
@@ -141,6 +144,17 @@ async function addNewProspect() {
     loadProspects();
   } catch (err) {
     showToast('Failed to add prospect', 'error');
+  }
+}
+
+async function updateProspectStatus(id, status, selectEl) {
+  try {
+    await API.put(`/prospects/${id}`, { pipeline_status: status });
+    if (selectEl) selectEl.style.backgroundColor = STATUS_COLORS[status];
+    showToast('Status updated');
+  } catch (err) {
+    showToast('Failed to update status', 'error');
+    loadProspects();
   }
 }
 
@@ -389,16 +403,6 @@ function getEmailStatusColor(status) {
     opened: '#27ae60', clicked: '#16a085', bounced: '#e74c3c', failed: '#e74c3c'
   };
   return colors[status] || '#95a5a6';
-}
-
-async function updateProspectStatus(id, status) {
-  try {
-    await API.put(`/prospects/${id}`, { pipeline_status: status });
-    showToast('Status updated');
-    loadProspects();
-  } catch (err) {
-    showToast('Failed to update', 'error');
-  }
 }
 
 async function updateProspectNotes(id, notes) {

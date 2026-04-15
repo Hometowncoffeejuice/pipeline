@@ -7,10 +7,13 @@ router.get('/', (req, res) => {
   const rows = db.prepare('SELECT key, value FROM app_settings').all();
   const settings = {};
   rows.forEach(r => {
-    // Mask API key for display
+    // Mask API keys for display
     if (r.key === 'resend_api_key' && r.value) {
       settings[r.key] = r.value.slice(0, 6) + '...' + r.value.slice(-4);
       settings['resend_configured'] = true;
+    } else if (r.key === 'anthropic_api_key' && r.value) {
+      settings[r.key] = r.value.slice(0, 8) + '...' + r.value.slice(-4);
+      settings['anthropic_configured'] = true;
     } else {
       settings[r.key] = r.value;
     }
@@ -20,7 +23,7 @@ router.get('/', (req, res) => {
 
 // Update settings
 router.put('/', (req, res) => {
-  const allowedKeys = ['from_email', 'from_name', 'reply_to_email', 'email_signature', 'daily_send_limit', 'catering_url', 'menu_url', 'booking_url', 'resend_api_key', 'business_address', 'location_glencoe', 'location_winnetka', 'location_glenview', 'location_lake_forest'];
+  const allowedKeys = ['from_email', 'from_name', 'reply_to_email', 'email_signature', 'daily_send_limit', 'catering_url', 'menu_url', 'booking_url', 'resend_api_key', 'anthropic_api_key', 'business_address', 'location_glencoe', 'location_winnetka', 'location_glenview', 'location_lake_forest'];
 
   const upsert = db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
 

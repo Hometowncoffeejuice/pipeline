@@ -14,6 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // API routes
 app.use('/api/prospects', require('./routes/prospects'));
 app.use('/api/templates', require('./routes/templates'));
+app.use('/api/template-coach', require('./routes/template-coach'));
 app.use('/api/campaigns', require('./routes/campaigns'));
 app.use('/api/outreach', require('./routes/outreach'));
 app.use('/api/dashboard', require('./routes/dashboard'));

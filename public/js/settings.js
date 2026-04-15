@@ -39,6 +39,16 @@ function renderSettingsView(settings, rules) {
           </div>
         </div>
 
+        <h4 style="margin-top:1.5rem">AI Template Coach</h4>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem">Powers the "Coach Me a Template" button on the Templates tab. Uses Claude to draft new email templates in your voice.</p>
+        <div class="form-grid">
+          <div class="field">
+            <label>Anthropic API Key</label>
+            <input id="setAnthropicKey" type="password" placeholder="${settings.anthropic_configured ? 'Configured (hidden)' : 'sk-ant-api03-...'}" value="">
+            <small>${settings.anthropic_configured ? 'API key is configured. Enter a new one to update.' : 'Get your key from console.anthropic.com'}</small>
+          </div>
+        </div>
+
         <h4 style="margin-top:1.5rem">Business Info & Links</h4>
         <div class="form-grid">
           <div class="field">
@@ -105,6 +115,8 @@ async function saveSettings() {
   const data = {};
   const apiKey = document.getElementById('setResendKey').value.trim();
   if (apiKey) data.resend_api_key = apiKey;
+  const anthropicKey = document.getElementById('setAnthropicKey').value.trim();
+  if (anthropicKey) data.anthropic_api_key = anthropicKey;
 
   data.from_email = document.getElementById('setFromEmail').value.trim();
   data.from_name = document.getElementById('setFromName').value.trim();
